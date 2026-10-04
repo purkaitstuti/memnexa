@@ -7,7 +7,7 @@ async function api(path, opt = {}) {
   const o = { credentials: 'same-origin', ...opt };
   if (o.body && !(o.body instanceof FormData)) { o.headers = { 'Content-Type': 'application/json' }; o.body = JSON.stringify(o.body); }
   const r = await fetch('/api' + path, o);
-  if (r.status === 401) { location = '/login.html'; throw new Error('Signed out'); }
+  if (r.status === 401) { location = '/index.html'; throw new Error('Signed out'); }
   const j = await r.json().catch(() => ({}));
   if (!r.ok) throw new Error(j.error || 'Request failed');
   return j;
@@ -134,7 +134,7 @@ function remind() {
     new Notification(m.due_date < T ? 'Overdue: ' + m.title : 'Due today: ' + m.title); seen[m.id + T] = 1; });
   localStorage.setItem('seen', JSON.stringify(seen));
 }
-$('#out').onclick = async () => { await fetch('/auth/logout', { method: 'POST' }); location = '/login.html'; };
+$('#out').onclick = async () => { await fetch('/auth/logout', { method: 'POST' }); location = '/index.html'; };
 (async () => {
   const me = await api('/me'); T = me.today;
   $('#av').innerHTML = me.avatar ? `<img class="av" src="${esc(me.avatar)}" referrerpolicy="no-referrer">` : esc((me.name || '?')[0]);

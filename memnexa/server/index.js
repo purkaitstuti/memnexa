@@ -9,6 +9,7 @@ const store = require('./db');
 const ai = require('./ai');
 
 const app = express();
+const clientDir = path.join(__dirname, '../client');
 const BASE = process.env.BASE_URL || 'http://localhost:3000';
 const prod = process.env.NODE_ENV === 'production';
 if (prod) app.set('trust proxy', 1);
@@ -39,7 +40,7 @@ app.get('/auth/google', (req, res, next) => {
   res.status(500).send('Google login is not set up. For local testing put DEV_LOGIN=true in .env and restart; otherwise add GOOGLE_CLIENT_ID and GOOGLE_CLIENT_SECRET.');
 });
 app.get('/auth/google/callback',
-  passport.authenticate('google', { failureRedirect: '/login.html?error=1' }),
+  passport.authenticate('google', { failureRedirect: '/index.html?error=1' }),
   (_q, res) => res.redirect('/app'));
 app.post('/auth/logout', (req, res) => req.logout(() => res.json({ ok: true })));
 if (process.env.DEV_LOGIN === 'true') {
@@ -48,10 +49,11 @@ if (process.env.DEV_LOGIN === 'true') {
 }
 
 // ---- pages ----
-app.get('/', (req, res) => res.redirect(req.isAuthenticated() ? '/app' : '/login.html'));
+app.get('/', (req, res) => res.redirect(req.isAuthenticated() ? '/app' : '/index.html'));
 app.get('/app', (req, res) => req.isAuthenticated()
-  ? res.sendFile(path.join(__dirname, '../views/dashboard.html')) : res.redirect('/login.html'));
-app.use(express.static(path.join(__dirname, '../client'), { index: false }));
+  ? res.sendFile(path.join(__dirname, '../views/dashboard.html')) : res.redirect('/index.html'));
+app.use('/client', express.static(clientDir, { index: false }));
+app.use(express.static(clientDir, { index: false }));
 
 // ---- api ----
 const api = express.Router();
