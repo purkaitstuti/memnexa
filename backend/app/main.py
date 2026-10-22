@@ -32,3 +32,20 @@ app.include_router(account.router)
 @app.get("/api/health")
 def health():
     return {"ok": True}
+
+
+from fastapi.staticfiles import StaticFiles
+from fastapi.responses import FileResponse
+from pathlib import Path
+
+FRONTEND_DIR = Path("/app/frontend/dist")
+
+if FRONTEND_DIR.exists():
+    app.mount("/assets", StaticFiles(directory=FRONTEND_DIR / "assets"), name="assets")
+
+    @app.get("/{full_path:path}")
+    def serve_frontend(full_path: str):
+        requested_file = FRONTEND_DIR / full_path
+        if full_path and requested_file.is_file():
+            return FileResponse(requested_file)
+        return FileResponse(FRONTEND_DIR / "index.html")
