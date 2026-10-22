@@ -9,6 +9,7 @@ from ..models import User
 from ..ratelimit import hit
 from ..schemas import Login, ProfileUpdate, SignUp, UserOut
 from ..security import hash_password, make_token, verify_password
+from ..urls import pick_base
 
 router = APIRouter(prefix="/api/auth", tags=["auth"])
 
@@ -79,25 +80,27 @@ async def google_login(request: Request):
     if "google" not in oauth._clients:
         raise HTTPException(503, "Google sign-in is not configured. Set GOOGLE_CLIENT_ID and "
                                  "GOOGLE_CLIENT_SECRET in .env (see README, section 'Google OAuth').")
-    return await oauth.google.authorize_redirect(request, f"{settings.backend_url}/api/auth/google/callback")
+    base = pick_base(settings.backend_url, request.headers, request.url.scheme)
+    return await oauth.google.authorize_redirect(request, f"{base}/api/auth/google/callback")
 
 
 @router.get("/google/callback")
 async def google_callback(request: Request, db: Session = Depends(get_db)):
     if "google" not in oauth._clients:
         raise HTTPException(503, "Google sign-in is not configured")
+    front = pick_base(settings.frontend_origin, request.headers, request.url.scheme)
     try:
         token = await oauth.google.authorize_access_token(request)
     except OAuthError:
-        return RedirectResponse(f"{settings.frontend_origin}/login?error=google_failed")
+        return RedirectResponse(f"{front}/login?error=google_failed")
     info = token.get("userinfo") or {}
     email = (info.get("email") or "").lower()
     if not email or not info.get("email_verified", False):
-        return RedirectResponse(f"{settings.frontend_origin}/login?error=google_email")
+        return RedirectResponse(f"{front}/login?error=google_email")
     user = db.scalar(select(User).where(User.email == email))
     if not user:
         user = User(name=info.get("name") or email.split("@")[0], email=email, provider="google")
         db.add(user); db.commit()
-    resp = RedirectResponse(f"{settings.frontend_origin}/")
+    resp = RedirectResponse(f"{front}/")
     set_session(resp, user.id)
     return resp
