@@ -2,10 +2,12 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from starlette.middleware.sessions import SessionMiddleware
 from .api import uploads
+from .api import account
 from .api import ask
 from .api import auth
 from .api import memories
 from .api import notifications
+from .api import search
 from .api import tasks
 from .config import settings
 from .database import Base, engine
@@ -23,6 +25,8 @@ app.include_router(memories.router)
 app.include_router(ask.router)
 app.include_router(uploads.router)
 app.include_router(notifications.router)
+app.include_router(search.router)
+app.include_router(account.router)
 
 
 @app.get("/api/health")
