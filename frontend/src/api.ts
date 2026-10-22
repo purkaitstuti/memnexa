@@ -65,4 +65,3 @@ export type Suggestion = { kind: "task" | "memory"; title: string; description: 
 export type UploadResult = { filename: string; text: string; suggestions: Suggestion[]; ai_error: string | null; summary: string };
 export type Notif = { id: number; message: string; read: boolean; delivered: boolean; scheduled_at: string; task_id: number | null; memory_id: number | null };
 export type NotifList = { items: Notif[]; unread: number };
-export type SearchResult = { tasks: Task[]; memories: Memory[]; tags: { tag: string; count: number }[] };

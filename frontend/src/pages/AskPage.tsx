@@ -57,13 +57,13 @@ export default function AskPage() {
   const submit = (e: FormEvent) => { e.preventDefault(); ask(input); };
 
   return (
-    <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
-      <Card className="flex min-w-0 flex-col lg:col-span-2">
+    <div className="grid gap-6 lg:grid-cols-3">
+      <Card className="flex min-h-[60vh] flex-col lg:col-span-2">
         <div className="mb-3 flex items-center justify-between">
           <div className="flex items-center gap-2 font-semibold"><Sparkles className="h-5 w-5 text-brand" />Ask Memnexa</div>
           {msgs.length > 0 && <button onClick={() => setMsgs([])} className="text-sm text-slate-500 hover:text-red-600">Clear conversation</button>}
         </div>
-        <div className="h-[52vh] min-h-[260px] space-y-4 overflow-y-auto overflow-x-hidden pr-1 lg:h-[60vh]" aria-live="polite">
+        <div className="flex-1 space-y-4 overflow-y-auto" aria-live="polite">
           {msgs.length === 0 && (
             <div className="flex h-full flex-col items-center justify-center gap-2 py-10 text-center">
               <span className="rounded-2xl bg-brand-light p-3 text-brand dark:bg-indigo-950"><Brain className="h-7 w-7" /></span>
@@ -72,14 +72,14 @@ export default function AskPage() {
             </div>
           )}
           {msgs.map((m, i) => m.role === "user" ? (
-            <div key={i} className="flex justify-end"><div className="max-w-[85%] break-words rounded-2xl rounded-br-md bg-brand px-4 py-2.5 text-sm text-white">{m.text}</div></div>
+            <div key={i} className="flex justify-end"><div className="max-w-[85%] rounded-2xl rounded-br-md bg-brand px-4 py-2.5 text-sm text-white">{m.text}</div></div>
           ) : m.role === "error" ? (
             <ErrorBox key={i} message={m.text} retry={m.q ? () => ask(m.q!) : undefined} />
           ) : (
-            <div key={i} className="max-w-full space-y-3 sm:max-w-[92%]">
-              <div className="break-words rounded-2xl rounded-bl-md bg-slate-100 px-4 py-3 dark:bg-slate-800"><Rich text={m.text} /></div>
+            <div key={i} className="max-w-[92%] space-y-3">
+              <div className="rounded-2xl rounded-bl-md bg-slate-100 px-4 py-3 dark:bg-slate-800"><Rich text={m.text} /></div>
               {(m.tasks?.length || m.memories?.length) ? (
-                <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
+                <div className="grid gap-2 sm:grid-cols-2">
                   {m.tasks?.map((t) => (
                     <Link key={`t${t.id}`} to={`/add?task=${t.id}`} className="rounded-xl border border-slate-200 p-3 text-sm hover:border-brand dark:border-slate-700">
                       <div className="mb-1 flex flex-wrap gap-1"><Badge tone="brand">Task</Badge>{t.is_overdue && <Badge tone="red">Overdue</Badge>}{t.status === "completed" && <Badge tone="green">Completed</Badge>}</div>
@@ -95,15 +95,15 @@ export default function AskPage() {
           <div ref={end} />
         </div>
         <form onSubmit={submit} className="mt-4 flex gap-2">
-          <input className={`${inputCls} min-w-0 flex-1`} placeholder="Ask a question…" aria-label="Your question" maxLength={500} value={input} onChange={(e) => setInput(e.target.value)} />
-          <Button type="submit" disabled={busy || !input.trim()} aria-label="Send" className="shrink-0"><Send className="h-4 w-4" /></Button>
+          <input className={inputCls} placeholder="Ask a question…" aria-label="Your question" maxLength={500} value={input} onChange={(e) => setInput(e.target.value)} />
+          <Button type="submit" disabled={busy || !input.trim()} aria-label="Send"><Send className="h-4 w-4" /></Button>
         </form>
       </Card>
-      <div className="min-w-0 space-y-6">
+      <div className="space-y-6">
         <Card>
           <h3 className="mb-3 font-semibold">Suggested questions</h3>
           <div className="flex flex-wrap gap-2">{SUGGESTED.map((s) => (
-            <button key={s} onClick={() => ask(s)} disabled={busy} className="max-w-full whitespace-normal break-words rounded-full border border-slate-200 px-3 py-1.5 text-left text-xs hover:border-brand hover:text-brand disabled:opacity-50 dark:border-slate-700">{s}</button>))}</div>
+            <button key={s} onClick={() => ask(s)} disabled={busy} className="rounded-full border border-slate-200 px-3 py-1.5 text-left text-xs hover:border-brand hover:text-brand disabled:opacity-50 dark:border-slate-700">{s}</button>))}</div>
         </Card>
         <Card>
           <div className="mb-3 flex items-center justify-between"><h3 className="font-semibold">Recent searches</h3>

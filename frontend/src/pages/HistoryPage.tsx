@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useState } from "react";
-import { Link, useSearchParams } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { api, type Page, type Task } from "../api";
 import { Button, Card, Empty, ErrorBox, inputCls, Spinner, useToast } from "../components/ui";
 import TaskRow from "../components/TaskRow";
@@ -8,13 +8,11 @@ const tabs = ["all", "pending", "completed", "overdue"] as const;
 
 export default function HistoryPage() {
   const toast = useToast();
-  const [sp] = useSearchParams();
   const [f, setF] = useState({ status: "all", q: "", priority: "", tag: "", from: "", to: "", sort: "due_asc", page: 1 });
   const [debQ, setDebQ] = useState("");
   const [data, setData] = useState<Page<Task> | null>(null);
   const [err, setErr] = useState("");
   const [loading, setLoading] = useState(true);
-  useEffect(() => { const t = sp.get("tag"); if (t !== null) setF((s) => ({ ...s, tag: t, page: 1 })); }, [sp]);
   useEffect(() => { const id = setTimeout(() => setDebQ(f.q), 300); return () => clearTimeout(id); }, [f.q]);
 
   const load = useCallback(async () => {

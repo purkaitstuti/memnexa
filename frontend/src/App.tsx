@@ -1,7 +1,7 @@
 import { Navigate, Route, Routes } from "react-router-dom";
 import { useAuth } from "./auth";
 import Layout from "./components/Layout";
-import Splash from "./components/Splash";
+import { Spinner } from "./components/ui";
 import AuthPage from "./pages/AuthPage";
 import Dashboard from "./pages/Dashboard";
 import Add from "./pages/Add";
@@ -12,13 +12,13 @@ import SettingsPage from "./pages/SettingsPage";
 
 function Protected() {
   const { user, loading } = useAuth();
-  if (loading) return <Splash />;
+  if (loading) return <Spinner />;
   return user ? <Layout /> : <Navigate to="/login" replace />;
 }
 
 export default function App() {
   const { user, loading } = useAuth();
-  if (loading) return <Splash />;
+  if (loading) return <Spinner />;
   return (
     <Routes>
       <Route path="/login" element={user ? <Navigate to="/" replace /> : <AuthPage mode="login" />} />
