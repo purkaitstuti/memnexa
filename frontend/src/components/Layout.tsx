@@ -5,6 +5,7 @@ import { useAuth } from "../auth";
 import { useTheme } from "../theme";
 import { api } from "../api";
 import NotificationBell from "./NotificationBell";
+import SearchBox from "./SearchBox";
 
 const nav = [
   { to: "/", label: "Dashboard", icon: LayoutDashboard },
@@ -39,6 +40,7 @@ export default function Layout() {
         <div className="flex items-center gap-2 md:hidden"><span className="rounded-lg bg-brand p-1.5 text-white"><Brain className="h-4 w-4" /></span><span className="font-bold">Memnexa</span></div>
         <h1 className="hidden text-lg font-semibold md:block">{titles[pathname] ?? "Memnexa"}</h1>
         <div className="relative flex items-center gap-1">
+          <SearchBox />
           <NotificationBell />
           <ThemeToggle />
           <button onClick={() => setMenu((m) => !m)} aria-label="Profile menu" aria-expanded={menu}
