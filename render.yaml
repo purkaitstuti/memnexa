@@ -1,0 +1,24 @@
+# Optional Render Blueprint. You can also create the service by hand (see README, "Deploying to Render").
+services:
+  - type: web
+    name: memnexa
+    runtime: docker
+    plan: free            # free = data resets on redeploy/restart; paid + a disk keeps it
+    healthCheckPath: /api/health
+    envVars:
+      - key: SECRET_KEY
+        generateValue: true
+      - key: COOKIE_SECURE
+        value: "true"
+      - key: BACKEND_URL           # your service address, e.g. https://memnexa.onrender.com
+        sync: false
+      - key: FRONTEND_ORIGIN       # the same address
+        sync: false
+      - key: GOOGLE_CLIENT_ID
+        sync: false
+      - key: GOOGLE_CLIENT_SECRET
+        sync: false
+      - key: OLLAMA_BASE_URL       # optional: only if an Ollama server is reachable from Render
+        sync: false
+      - key: OLLAMA_MODEL
+        value: gemma4:e2b
